@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 import argparse
-import sys
-
 import requests
 import sqlite3
 
@@ -12,6 +10,8 @@ import sqlite3
 #
 
 def init_db():
+    """Initializes sqlite3"""
+
     try:
         conn = sqlite3.connect(':memory:')
         c = conn.cursor()
@@ -22,17 +22,28 @@ def init_db():
         conn.commit()
     except sqlite3.Error as er:
         print('SQLite error: %s' % (' '.join(er.args)))
-        print("Exception class is: ", er.__class__)
-        sys.exit(2)
+        raise SystemExit(er)
 
 
-def get_list_of_users(num_users):
+def get_list_of_users(total_users):
+    """Get List of GitHub Users."""
+
     users = {}
-    r = requests.get('https://api.github.com/users', headers={'Accept': 'application/vnd.github.v3+json'})
-    users = r.json()
-    while 'next' in r.links.keys():
-        resp = requests.get(r.links['next']['url'], headers={'Accept': 'application/vnd.github.v3+json'})
-        break
+    len_users = 0
+
+    try:
+        r = requests.get('https://api.github.com/users', headers={'Accept': 'application/vnd.github.v3+json'})
+        users = r.json()
+        len_users = len(users)
+        # login, id, avatar_url, type, html_url
+        while 'next' in r.links.keys() and len_users < total_users:
+            resp = requests.get(r.links['next']['url'], headers={'Accept': 'application/vnd.github.v3+json'})
+            more_users = resp.json()
+            len_users += len(more_users)
+            # Remove this break
+            break
+    except requests.exceptions.RequestException as e:
+        raise SystemExit(e)
 
 
 def main():
