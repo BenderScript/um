@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>List of Users</title>
+</head>
+   <body>
+   <!-- username, id, image, type, profile -->
+   <table border = 1>
+       <thead>
+            <td>Username</td>
+            <td>Id>/td<
+            <td>Image</td>
+            <td>Type</td>
+            <td>Profile</td>
+       </thead>
+         
+         {% for row in rows %}
+            <tr>
+               <td>{{row["username"]}}</td>
+               <td>{{row["id"]}}</td>
+               <td> {{ row["image"]}}</td>
+               <td>{{row['type']}}</td>
+                <td>{{row['profile']}}</td>
+            </tr>
+         {% endfor %}
+      </table>
+      <!-- fix this -->
+      <a href = "home.html">Go back to home page</a>
+   </body>
+</html>
