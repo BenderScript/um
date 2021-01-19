@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 import argparse
+import sys
+
 import requests
 import sqlite3
 
@@ -29,7 +31,6 @@ def get_list_of_users(total_users):
     """Get List of GitHub Users."""
 
     users = {}
-    len_users = 0
 
     try:
         r = requests.get('https://api.github.com/users', headers={'Accept': 'application/vnd.github.v3+json'})
@@ -49,8 +50,11 @@ def get_list_of_users(total_users):
 def main():
     parser = argparse.ArgumentParser(description='Fetch GitHub Users')
     parser.add_argument('--total', type=int,
-                        help='total number of users', default=150)
+                        help='total number of users to retrieve', default=150)
     args = parser.parse_args()
+    if args.total > 1000 or args.total < 1:
+        print("Are you a bot? Exiting...")
+        sys.exit(2)
     init_db()
     get_list_of_users(args.total)
 
