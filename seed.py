@@ -11,17 +11,19 @@ import sqlite3
 #   https://api.github.com/users
 #
 
-def init_db():
+def init_db(db_name):
     """Initializes sqlite3"""
 
     try:
-        conn = sqlite3.connect(':memory:')
+        conn = sqlite3.connect(db_name)
         c = conn.cursor()
+
         # Create table
         c.execute('''CREATE TABLE users
                      (username text, id text, image text, type text, profile real)''')
         # Save (commit) the changes
         conn.commit()
+
     except sqlite3.Error as er:
         print('SQLite error: %s' % (' '.join(er.args)))
         raise SystemExit(er)
@@ -51,11 +53,13 @@ def main():
     parser = argparse.ArgumentParser(description='Fetch GitHub Users')
     parser.add_argument('--total', type=int,
                         help='total number of users to retrieve', default=150)
+    parser.add_argument('--dbname', type=str,
+                        help='Db name', default=':memory:')
     args = parser.parse_args()
     if args.total > 1000 or args.total < 1:
         print("Are you a bot? Exiting...")
         sys.exit(2)
-    init_db()
+    init_db(args.dbname)
     get_list_of_users(args.total)
 
 

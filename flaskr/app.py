@@ -8,11 +8,6 @@ from werkzeug.exceptions import HTTPException
 app = Flask(__name__, template_folder='templates')
 
 
-@app.route('/', methods=['GET'])
-def home():
-    return render_template('home.html')
-
-
 @app.route('/list', methods=['GET'])
 def list_users():
     con = sqlite3.connect("users.db")
